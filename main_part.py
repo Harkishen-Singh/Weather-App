@@ -1,7 +1,6 @@
 import random
-import urllib
-import requests
-import urllib2
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
 
 class Main_App:
     def __init__(self):
@@ -13,43 +12,45 @@ class Main_App:
 
     def asking(self):
         #self.city = input("City name : ")
-        self.city = "Ludhiana"
-        self.state = "Punjab"
+        self.city = "ludhiana"
+        self.state = "lunjab"
         self.country = "india"
         # organising the input to avoid errors while using request library
-        if self.city[0].islower():
+        '''if self.city[0].islower():
             self.city2 = self.city[0].toupper() + self.city[1:]
             self.city = self.city2
 
         if self.state[0].islower():
             self.state2 = self.state[0].toupper() + self.state[1:]
-            self.state = self.state2
+            self.state = self.state2'''
 
         # url format design below
 
         #self.format = "https://www.msn.com/en-in/weather/today"+ self.city+self.state+"india/we-city?q="+self.city+self.state+"&form=PRWLAS&iso=IN&el"
-        self.format = "https://www.msn.com/en-in/weather/today"+ self.city+self.state+self.country+"/we-city?q="+self.city+self.state+"&form=PRWLAS&iso=IN&el"
+        self.format = "https://www.msn.com/en-in/weather/today/"+ self.city+self.state+self.country+"/we-city?q="+self.city+"-"+self.state+"&form=PRWLAS&iso=IN&el"
         self.extracting_info_from_net(self.format)
 
 
     def extracting_info_from_net(self, url):
-        self.response = urllib.urlopen(url)
-        self.source_text = self.response.read()
-
-        #       self.source_text = self.source.text
-
+        self.response = urlopen(url)
+        self.source = self.response.read()
+        self.source_text = BeautifulSoup(self.source)
+        self.temp = self.source_text.text
+        self.source_text = self.temp
         self.length_source_text = len(self.source_text)
-        print("len(self.source_text) : "+str(len(self.source_text)))
-        get_span = 'span class="current" aria-label='
-        length_get_span = len(get_span)
-        print(length_get_span)
+        print("len(self.source_text) : "+ str(self.length_source_text))
+        search_class = 'class="curcond"'
+        length_class = len(search_class)
+        print(length_class)
+        print(self.source_text)
 
 
-        for i in range(0, self.length_source_text - 32):
-            sub = self.source_text[i:i+32]
-            if sub == get_span :
+        for i in range(0, self.length_source_text - length_class):
+            sub = self.source_text[i:i+length_class]
+            #print("tough part : " +sub)
+            if sub == search_class :
                 print('working')
-                self.pos_of_temp = i + length_get_span
+                self.pos_of_temp = i + length_class
                 break
 
         # finding the first " >" position after =
@@ -71,3 +72,4 @@ obj = Main_App()
 obj.asking()
 obj.extracting_info_from_net()
 obj.displaying()
+
