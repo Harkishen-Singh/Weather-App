@@ -25,8 +25,6 @@ class Main_App:
             self.state = self.state2'''
 
         # url format design below
-
-        #self.format = "https://www.msn.com/en-in/weather/today"+ self.city+self.state+"india/we-city?q="+self.city+self.state+"&form=PRWLAS&iso=IN&el"
         self.format = "https://www.msn.com/en-in/weather/today/"+ self.city+self.state+self.country+"/we-city?q="+self.city+"-"+self.state+"&form=PRWLAS&iso=IN&el"
         self.extracting_info_from_net(self.format)
 
@@ -38,38 +36,34 @@ class Main_App:
         self.temp = self.source_text.text
         self.source_text = self.temp
         self.length_source_text = len(self.source_text)
-        print("len(self.source_text) : "+ str(self.length_source_text))
-        search_class = 'class="curcond"'
+        #print("len(self.source_text) : "+ str(self.length_source_text))
+        search_class = 'Punjab'
         length_class = len(search_class)
-        print(length_class)
-        print(self.source_text)
 
-
+        c = 0
         for i in range(0, self.length_source_text - length_class):
             sub = self.source_text[i:i+length_class]
             #print("tough part : " +sub)
             if sub == search_class :
-                print('working')
+                # print('working')
                 self.pos_of_temp = i + length_class
-                break
+                c = c + 1
+                if c == 2:
+                    break
 
-        # finding the first " >" position after =
-        print("self.pos_of_temp : " + str(self.pos_of_temp))
-        for i in range(0,20):
-            if self.source_text[ self.pos_of_temp + i ] == ">":
-                #print(self.source_text[ self.pos_of_temp + i ])
-                self.pos2 = i + self.pos_of_temp
-                break
-        print(self.pos2)
-        print(self.source_text[self.pos2 + 1 : self.pos2+30 ])
-        self.temperature = int(self.source_text[self.pos2 + 1 ])
+        # finding the first number after the statename
+        self.pos2 = self.pos_of_temp + 3 # represents the index of the first digit of temperature
+        if self.source_text[self.pos2 + 1].isnumeric() :
+            print("got it")
+            self.temperature = int(self.source_text[self.pos2] + self.source_text[self.pos2 + 1])
+
+        else :
+            self.temperature = int(self.source_text[self.pos2])
 
     def displaying(self):
-        print("The temperature of the city u entered is : "+ self.temperature)
+        print("The temperature of the city u entered is : "+ str(self.temperature))
 
 
 obj = Main_App()
 obj.asking()
-obj.extracting_info_from_net()
 obj.displaying()
-
