@@ -11,9 +11,10 @@ class Main_App:
         self.pos2 = 0
 
     def asking(self):
-        #self.city = input("City name : ")
-        self.city = "ludhiana"
-        self.state = "punjab"
+        self.city = input("City name : ")
+        self.city = self.city.lower()
+        self.state = input("State name : ")
+        self.state = self.state.lower()
         self.country = "india"
         # organising the input to avoid errors while using request library
         '''if self.city[0].islower():
@@ -37,9 +38,12 @@ class Main_App:
         self.source_text = self.temp
         self.length_source_text = len(self.source_text)
         #print("len(self.source_text) : "+ str(self.length_source_text))
-        search_class = 'Punjab'
+        search_class = self.state
+        temp2 = search_class[0].upper() + search_class[1:]
+        search_class = temp2
+        print("search class = " + search_class)
         length_class = len(search_class)
-
+        print(self.source_text)
         c = 0
         for i in range(0, self.length_source_text - length_class):
             sub = self.source_text[i:i+length_class]
@@ -61,7 +65,7 @@ class Main_App:
             self.temperature = int(self.source_text[self.pos2])
 
     def displaying(self):
-        print("The temperature of the city u entered is : "+ str(self.temperature))
+        print("The temperature of " + self.city +  " is : "+ str(self.temperature))
 
 
 obj = Main_App()
