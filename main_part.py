@@ -13,7 +13,7 @@ class Main_App:
     def asking(self):
         #self.city = input("City name : ")
         self.city = "ludhiana"
-        self.state = "lunjab"
+        self.state = "punjab"
         self.country = "india"
         # organising the input to avoid errors while using request library
         '''if self.city[0].islower():
