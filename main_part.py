@@ -82,13 +82,77 @@ class Core_Base:
         l_visibility = len("Visibility")
         l_humidity = len("Humidity")
         l_dew_point = len("Dew Point")
+        count = self.pos2 +2
 
         #working on these declared variables
+        for i in range(count, count + 100):
+            sub_1 = self.source_text[i:i + l_feel]
+            sub_2 = self.source_text[i:i + l_barometer]
+            sub_3 = self.source_text[i:i + l_visibility]
+            sub_4 = self.source_text[i:i + l_humidity]
+            sub_5 = self.source_text[i:i + l_dew_point]
+
+            if sub_1 == "Feels":
+                for j in range(0, 20):
+                    if self.is_int(self.source_text[i + j]):
+                        if self.source_text[i + j + 1].isnumeric() :
+                            self.feel = int(self.source_text[i + j] + self.source_text[i + j + 1])
+
+                        else :
+                            self.feel = int(self.source_text[i + j])
+                        break
+
+            '''if sub_2 == "Barometer":
+                for j in range(0, 20):
+                    if self.is_int(self.source_text[i + j]):
+                        if self.source_text[i + j + 1].isnumeric() :
+                            self.barometer = int(self.source_text[i + j] + self.source_text[i + j + 1])
+
+                        else :
+                            self.barometer = int(self.source_text[i + j])
+                        break'''
+            # for present, Barometer part is skipped.
+            if sub_3 == "Visibility":
+                for j in range(0, 20):
+                    if self.is_int(self.source_text[i + j]):
+                        if self.source_text[i + j + 1].isnumeric() :
+                            self.visibility = int(self.source_text[i + j] + self.source_text[i + j + 1])
+
+                        else :
+                            self.visibility = int(self.source_text[i + j])
+                        break
+            if sub_4 == "Humidity":
+                for j in range(0, 20):
+                    if self.is_int(self.source_text[i + j]):
+                        if self.source_text[i + j + 1].isnumeric() :
+                            self.humidity = int(self.source_text[i + j] + self.source_text[i + j + 1])
+
+                        else :
+                            self.humidity = int(self.source_text[i + j])
+                        break
+            if sub_5 == "Dew Point":
+                for j in range(0, 20):
+                    if self.is_int(self.source_text[i + j]):
+                        if self.source_text[i + j + 1].isnumeric() :
+                            self.dew_point = int(self.source_text[i + j] + self.source_text[i + j + 1])
+
+                        else :
+                            self.dew_point = int(self.source_text[i + j])
+                        break
+
+
 
     def displaying(self):
-        print("The temperature of " + self.city +  " is : "+ str(self.temperature))
+        print("Temperature of " + self.city +  " is : "+ str(self.temperature))
+        print("Feels Like :" + str(self.feel) + " C")
+        print("Visibility :" + str(self.visibility) + " km")
+        print("Humidity :" + str(self.humidity) + " %")
+        print("Dew Point :" + str(self.dew_point) + " '")
+
+
 
 
 obj = Core_Base()
 obj.asking()
+obj.further_info()
 obj.displaying()
