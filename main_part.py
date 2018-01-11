@@ -1,6 +1,7 @@
 import random
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+# from __future__ import print_function
 
 class Main_App:
     def __init__(self):
@@ -30,6 +31,20 @@ class Main_App:
         self.extracting_info_from_net(self.format)
 
 
+    def is_float(self, input):
+          try:
+            num = float(input)
+          except ValueError:
+            return False
+          return True
+
+    def is_int(self, input):
+          try:
+            num = int(input)
+          except ValueError:
+            return False
+          return True
+
     def extracting_info_from_net(self, url):
         self.response = urlopen(url)
         self.source = self.response.read()
@@ -38,12 +53,12 @@ class Main_App:
         self.source_text = self.temp
         self.length_source_text = len(self.source_text)
         #print("len(self.source_text) : "+ str(self.length_source_text))
-        search_class = self.state
-        temp2 = search_class[0].upper() + search_class[1:]
-        search_class = temp2
+        #search_class = self.state
+        #temp2 = search_class[0].upper() + search_class[1:]
+        search_class = "Places"
         print("search class = " + search_class)
         length_class = len(search_class)
-        print(self.source_text)
+        #print(self.source_text)
         c = 0
         for i in range(0, self.length_source_text - length_class):
             sub = self.source_text[i:i+length_class]
@@ -51,12 +66,17 @@ class Main_App:
             if sub == search_class :
                 # print('working')
                 self.pos_of_temp = i + length_class
-                c = c + 1
-                if c == 2:
-                    break
 
+        print("self.pos_of_temp : "+ str(self.pos_of_temp))
         # finding the first number after the statename
-        self.pos2 = self.pos_of_temp + 3 # represents the index of the first digit of temperature
+        for i in range(0,30):
+            #print(str(i)+ "\t" + self.source_text[i+self.pos_of_temp])
+            if self.is_int(self.source_text[i+self.pos_of_temp]):
+                print("GOT THE FIRST INTEGER")
+                self.pos2 = i+self.pos_of_temp
+                break
+
+
         if self.source_text[self.pos2 + 1].isnumeric() :
             print("got it")
             self.temperature = int(self.source_text[self.pos2] + self.source_text[self.pos2 + 1])
