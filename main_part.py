@@ -3,7 +3,7 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 # from __future__ import print_function
 
-class Main_App:
+class Core_Base:
     def __init__(self):
         self.temperature = 0
         self.city = ""
@@ -17,15 +17,6 @@ class Main_App:
         self.state = input("State name : ")
         self.state = self.state.lower()
         self.country = "india"
-        # organising the input to avoid errors while using request library
-        '''if self.city[0].islower():
-            self.city2 = self.city[0].toupper() + self.city[1:]
-            self.city = self.city2
-
-        if self.state[0].islower():
-            self.state2 = self.state[0].toupper() + self.state[1:]
-            self.state = self.state2'''
-
         # url format design below
         self.format = "https://www.msn.com/en-in/weather/today/"+ self.city+self.state+self.country+"/we-city?q="+self.city+"-"+self.state+"&form=PRWLAS&iso=IN&el"
         self.extracting_info_from_net(self.format)
@@ -52,9 +43,6 @@ class Main_App:
         self.temp = self.source_text.text
         self.source_text = self.temp
         self.length_source_text = len(self.source_text)
-        #print("len(self.source_text) : "+ str(self.length_source_text))
-        #search_class = self.state
-        #temp2 = search_class[0].upper() + search_class[1:]
         search_class = "Places"
         print("search class = " + search_class)
         length_class = len(search_class)
@@ -62,7 +50,6 @@ class Main_App:
         c = 0
         for i in range(0, self.length_source_text - length_class):
             sub = self.source_text[i:i+length_class]
-            #print("tough part : " +sub)
             if sub == search_class :
                 # print('working')
                 self.pos_of_temp = i + length_class
@@ -70,9 +57,7 @@ class Main_App:
         print("self.pos_of_temp : "+ str(self.pos_of_temp))
         # finding the first number after the statename
         for i in range(0,30):
-            #print(str(i)+ "\t" + self.source_text[i+self.pos_of_temp])
             if self.is_int(self.source_text[i+self.pos_of_temp]):
-                print("GOT THE FIRST INTEGER")
                 self.pos2 = i+self.pos_of_temp
                 break
 
@@ -84,10 +69,26 @@ class Main_App:
         else :
             self.temperature = int(self.source_text[self.pos2])
 
+    def further_info(self):
+        # declaring and initializing
+
+        self.feel = 0
+        self.barometer = 0
+        self.visibility = 0
+        self.humidity = 0
+        self.dew_point = 0
+        l_feel = len("Feels") # where all l_<feature> represents the length of various parameters
+        l_barometer = len("Barometer")
+        l_visibility = len("Visibility")
+        l_humidity = len("Humidity")
+        l_dew_point = len("Dew Point")
+
+        #working on these declared variables
+
     def displaying(self):
         print("The temperature of " + self.city +  " is : "+ str(self.temperature))
 
 
-obj = Main_App()
+obj = Core_Base()
 obj.asking()
 obj.displaying()
