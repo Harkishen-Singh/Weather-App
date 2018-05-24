@@ -2,6 +2,7 @@ import random
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 # from __future__ import print_function
+pos=0
 
 class Core_Base:
     def __init__(self):
@@ -148,7 +149,7 @@ class Core_Base:
         print("Visibility :" + str(self.visibility) + " km")
         print("Humidity :" + str(self.humidity) + " %")
         print("Dew Point :" + str(self.dew_point) + " '")
-        #print('\n\n'+self.source_text)
+        print('\n\n'+self.source_text)
         self.splitting()
 
     def splitting(self):
@@ -160,21 +161,36 @@ class Core_Base:
             b = self.source_text[i : i+len(tt)]
             if b == tt :
                 counter += 1
-                pos = i + len(tt) +19
+                pos = i + len(tt)+19
         print('The counter of Hourly Forecast- is ' + str(counter))
         if counter == 1:
             #print(self.source_text[pos:pos+337])
-            var = self.source_text[pos:pos+337].split('\n\n \n')
+            self.var = self.source_text[pos:pos+337].split('\n\n \n')
             print('\nHourly Forecast\n')
-            for xx in var :
+            for xx in self.var :
                 xx.replace('\n',' ')
-            var.pop(len(var)-1)
-            print(var)
+            self.var.pop(len(self.var)-1)
+            print(self.var)
+            self.other_general_information()
         else :
-            print('\nHourly Forecast More than two available\n')
+            print('\nHourly Forecast More than one available\n')
             exit(1)
-
-
+    def other_general_information(self):
+        self.place = ''
+        pos = 0
+        self.day_checker = 'Places'
+        for i in range(0, len(self.source_text)-len(self.day_checker)) :
+            word = self.source_text[i:len(self.day_checker)]
+            if word == self.day_checker :
+                pos = i + len(self.day_checker)+1
+                break
+        rang = pos + 60
+        placesArr = self.source_text[pos+11: rang].split(' ')
+        for p in range(0, len(placesArr)-2):
+            placesArr.pop(2)
+        #print(placesArr)
+        self.place = placesArr[0]+' '+placesArr[1]
+        print(self.place)
 
 
 
