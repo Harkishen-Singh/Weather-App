@@ -148,6 +148,33 @@ class Core_Base:
         print("Visibility :" + str(self.visibility) + " km")
         print("Humidity :" + str(self.humidity) + " %")
         print("Dew Point :" + str(self.dew_point) + " '")
+        #print('\n\n'+self.source_text)
+        self.splitting()
+
+    def splitting(self):
+        spilts = self.source_text
+        tt = 'Hourly Forecast -'
+        counter = 0
+        pos = 0
+        for i in range(0, len(self.source_text)-len(tt)):
+            b = self.source_text[i : i+len(tt)]
+            if b == tt :
+                counter += 1
+                pos = i + len(tt) +19
+        print('The counter of Hourly Forecast- is ' + str(counter))
+        if counter == 1:
+            #print(self.source_text[pos:pos+337])
+            var = self.source_text[pos:pos+337].split('\n\n \n')
+            print('\nHourly Forecast\n')
+            for xx in var :
+                xx.replace('\n',' ')
+            var.pop(len(var)-1)
+            print(var)
+        else :
+            print('\nHourly Forecast More than two available\n')
+            exit(1)
+
+
 
 
 
