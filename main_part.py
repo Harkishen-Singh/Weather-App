@@ -1,6 +1,7 @@
 import random
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+import datetime
 # from __future__ import print_function
 pos=0
 
@@ -10,7 +11,9 @@ class Core_Base:
         self.city = ""
         self.state = ""
         self.pos_of_temp=0
-        self.pos2 = 0
+        self.pos2 = 0; 
+        self.min_temp=0;self.max_temp=0; self.avg_temp = 0.0
+        self.max_rain_probability=0.0; self.mix_rain_probability=0.0; self.avg_rain = 0.0
 
     def asking(self):
         self.city = input("City name : ")
@@ -45,7 +48,7 @@ class Core_Base:
         self.source_text = self.temp
         self.length_source_text = len(self.source_text)
         search_class = "Places"
-        print("search class = " + search_class)
+        #print("search class = " + search_class)
         length_class = len(search_class)
         #print(self.source_text)
         c = 0
@@ -55,7 +58,7 @@ class Core_Base:
                 # print('working')
                 self.pos_of_temp = i + length_class
 
-        print("self.pos_of_temp : "+ str(self.pos_of_temp))
+        #print("self.pos_of_temp : "+ str(self.pos_of_temp))
         # finding the first number after the statename
         for i in range(0,30):
             if self.is_int(self.source_text[i+self.pos_of_temp]):
@@ -64,7 +67,7 @@ class Core_Base:
 
 
         if self.source_text[self.pos2 + 1].isnumeric() :
-            print("got it")
+            #print("got it")
             self.temperature = int(self.source_text[self.pos2] + self.source_text[self.pos2 + 1])
 
         else :
@@ -144,12 +147,13 @@ class Core_Base:
 
 
     def displaying(self):
-        print("Temperature of " + self.city +  " is : "+ str(self.temperature))
+        print('\n\n\nTime ' + str(datetime.datetime.now()))
+        print("Temperature at that moment of " + self.city +  " is : "+ str(self.temperature))
         print("Feels Like :" + str(self.feel) + " C")
         print("Visibility :" + str(self.visibility) + " km")
         print("Humidity :" + str(self.humidity) + " %")
         print("Dew Point :" + str(self.dew_point) + " '")
-        print('\n\n'+self.source_text)
+        #print('\n\n'+self.source_text)
         self.splitting()
 
     def splitting(self):
@@ -162,7 +166,7 @@ class Core_Base:
             if b == tt :
                 counter += 1
                 pos = i + len(tt)+19
-        print('The counter of Hourly Forecast- is ' + str(counter))
+        print('The counter of "Hourly Forecast -" is ' + str(counter))
         if counter == 1:
             #print(self.source_text[pos:pos+337])
             self.var = self.source_text[pos:pos+337].split('\n\n \n')
@@ -172,10 +176,13 @@ class Core_Base:
             self.var.pop(len(self.var)-1)
             print(self.var)
             self.other_general_information()
+            self.temperature_and_rainfall_processing()
         else :
             print('\nHourly Forecast More than one available\n')
             exit(1)
+
     def other_general_information(self):
+
         self.place = ''
         pos = 0
         self.day_checker = 'Places'
@@ -190,8 +197,89 @@ class Core_Base:
             placesArr.pop(2)
         #print(placesArr)
         self.place = placesArr[0]+' '+placesArr[1]
-        print(self.place)
+        print('\n'+self.place+'\n')
 
+    def temperature_and_rainfall_processing(self):
+
+        self.temps = []
+        self.rains = []
+        for i in self.var:
+            j = i[2:]
+            #print('J is '+j)
+            num=''
+            num_rain = ''
+            checker1 = False;checker2 = False;checker3 = False
+            for x in j:
+                if x.isdigit() and checker2 == False :
+                    num += x
+                    checker1 = True
+
+                if x.isdigit() and checker2 == True :
+                    num_rain += x
+                    if len(num_rain) == 3:
+                        break
+
+                else :
+                    checker2 = True
+
+            # for rain calculations
+            pos_percent = 0; got_percent = False
+            for m in range(0,len(j)) :
+                if m == '%' :
+                    pos_percent = m
+                    got_percent = True
+                    break
+            if got_percent == True :
+                if j[m-3].isdigit():
+                    num += j[m-3]
+                    print('third last from percent is digit')
+
+                if j[m-2].isdigit():
+                    num += j[m-2]
+                    print('second last from percent is digit')
+                if j[m-1].isdigit():
+                    num += j[m-1]
+                    print('last from percent is digit')
+
+
+            num_rain = (num_rain[:-1])
+            xx = float(num_rain)
+            #print('Rain is '+ num)
+            #print('temp is '+ str(xx)) # mistakenly num_rain is the temperature scripted
+
+            self.temps.append(xx)
+            #print(i[8:10].replace('%',''))
+            self.rains.append(float(i[8:10].replace('%','')))
+
+        print(self.rains)
+        print(self.temps)
+
+        self.continuing()
+
+    def continuing(self):
+            self.max_temp = self.temps[0];self.min_temp = self.temps[0]
+            self.max_rain_probability = self.rains[0];self.min_rain_probability = self.rains[0]
+            total_rains = 0; total_temp = 0
+            for i in self.rains :
+                if i > self.max_rain_probability :
+                    self.max_rain_probability = i
+                if i < self.min_rain_probability :
+                    self.min_rain_probability = i
+                total_rains += i
+            self.avg_rain = total_rains / len(self.rains)
+            for j in self.temps :
+                if j > self.max_temp :
+                    self.max_temp = j
+                if j < self.min_temp :
+                    self.min_temp = j
+                total_temp += j
+            self.avg_temp = total_temp / len(self.temps)
+
+            print('\nMax rainfall '+str(self.max_rain_probability)+'\t Max temp '+str(self.max_temp))
+            print('Min rainfall '+str(self.min_rain_probability)+'\t Min temp '+str(self.min_temp))
+            print('Avg rainfall '+str(self.avg_rain)+'\t Avg Temp '+str(self.avg_temp))
+
+        
 
 
 
